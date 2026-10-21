@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #243b55;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        h2 {
+            color: #243b55;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background: #243b55;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .delete-btn {
+            background: #d93636;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        .search-box {
+            margin-top: 25px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Library Management System</h1>
+    <p>Manage your library books easily</p>
+</header>
+
+<div class="container">
+    <h2>Add a New Book</h2>
+
+    <form id="bookForm">
+        <input type="text" id="bookId"
+               placeholder="Enter Book ID" required>
+
+        <input type="text" id="bookTitle"
+               placeholder="Enter Book Title" required>
+
+        <input type="text" id="author"
+               placeholder="Enter Author Name" required>
+
+        <input type="text" id="category"
+               placeholder="Enter Book Category" required>
+
+        <button type="submit">Add Book</button>
+    </form>
+
+    <div class="search-box">
+        <h2>Search Books</h2>
+        <input type="text" id="search"
+               placeholder="Search by title, author, or category">
+    </div>
+
+    <h2>Book List</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="bookList">
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    <p>Library Management System | Created by Rakshitha</p>
+</footer>
+
+<script>
+    const bookForm = document.getElementById("bookForm");
+    const bookList = document.getElementById("bookList");
+    const search = document.getElementById("search");
+
+    let books = [];
+
+    bookForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const id = document.getElementById("bookId").value.trim();
+        const title = document.getElementById("bookTitle").value.trim();
+        const author = document.getElementById("author").value.trim();
+        const category = document.getElementById("category").value.trim();
+
+        if (books.some(book => book.id === id)) {
+            alert("This Book ID already exists!");
+            return;
+        }
+
+        books.push({ id, title, author, category });
+
+        displayBooks(books);
+        bookForm.reset();
+    });
+
+    function displayBooks(bookArray) {
+        bookList.replaceChildren();
+
+        bookArray.forEach(function(book) {
+            const row = document.createElement("tr");
+
+            [book.id, book.title, book.author, book.category]
+                .forEach(function(value) {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+            const actionCell = document.createElement("td");
+            const deleteButton = document.createElement("button");
+
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "delete-btn";
+
+            deleteButton.addEventListener("click", function() {
+                books = books.filter(item => item.id !== book.id);
+                displayBooks(books);
+            });
+
+            actionCell.appendChild(deleteButton);
+            row.appendChild(actionCell);
+            bookList.appendChild(row);
+        });
+    }
+
+    search.addEventListener("input", function() {
+        const keyword = search.value.toLowerCase();
+
+        const filteredBooks = books.filter(function(book) {
+            return book.title.toLowerCase().includes(keyword) ||
+                   book.author.toLowerCase().includes(keyword) ||
+                   book.category.toLowerCase().includes(keyword) ||
+                   book.id.toLowerCase().includes(keyword);
+        });
+
+        displayBooks(filteredBooks);
+    });
+</script>
+
+</body>
+</html>
